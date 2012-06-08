@@ -23,8 +23,10 @@ class config(object):
         '''
         Constructor 
         '''
-        
-        os.chdir(os.path.dirname(sys.argv[0]))
+        try:
+            os.chdir(os.path.dirname(sys.argv[0]))
+        except:
+            pass
         
         self.voteUrl = 'http://millenium-servers.com/newvoter.php'
         

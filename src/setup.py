@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 from distutils.core import setup
 import py2exe, sys, os
 
@@ -6,8 +8,8 @@ sys.argv.append('py2exe')
 
 
 
-setup(console=['.\config.py'])
-setup(console=['.\vote.py'])
+setup(console=['.\\config.py'])
+setup(console=['.\\vote.py'])
 
 setup(windows=[{
     'script':'launch.py',
