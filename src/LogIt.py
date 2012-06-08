@@ -8,6 +8,7 @@ Created on 2 mai 2012
 from time import strftime, localtime, strptime, mktime
 
 class logit:
+    '''Permet d'enregistrer dans un fichier '''
     def __init__(self, logfile="log.txt"):
         self.logfile = logfile
     

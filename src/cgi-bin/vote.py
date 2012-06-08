@@ -2,35 +2,36 @@
 # -*- coding: UTF-8 -*-
 
 '''
-Created on 7 juin 2012
+Created on 8 juin 2012
 
 @author: maxisoft
 '''
 
+########################################
 
+USER =  '___________________________'
+PASSW = '___________________________'
 
+#######################################
 
-import config as cfg
 
 import re
-
-import LogIt
 
 # nav on Web import
 import cookielib
 import urllib
 import urllib2
 
+import cgitb
+cgitb.enable()
+
 
 #Globals
 
-config = cfg.config()
 
 pageVote = "" #Global contenant la page de vote
 
-request_headers = { 'User-Agent': config.getHeader() }
-
-log = LogIt.logit()
+request_headers = { 'User-Agent': 'Mozilla/5.0' }
 
 
 
@@ -45,14 +46,14 @@ urlOpener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar))
 def dlPageVote():
     """Telecharge la page de vote en memoire"""
     global pageVote
-    request = urllib2.Request(config.voteUrl, None, request_headers)
+    request = urllib2.Request('http://millenium-servers.com/newvoter.php', None, request_headers)
     url = urlOpener.open(request)
     pageVote = url.read(500000) # on lit tout
     
 
 def getVoteVerif():
     """Recupere le 'voteVerif' constituer d'hex."""
-    index = pageVote.find(config.VoteVerifStr) + len(config.VoteVerifStr)
+    index = pageVote.find("""var m_url = "newvoter.php?voteID=" + id + "&voteVerif=""") + len("""var m_url = "newvoter.php?voteID=" + id + "&voteVerif=""")
     return pageVote[index:pageVote.find('&', index, index + 50)]
 
 
@@ -97,13 +98,9 @@ def login(user, passw):
 
     
 def main():
-    __login = config.getLogin()
-    user =str(__login['user'])
-    if not login(user, __login['passw']):
-        log.log('Erreur lors de la connexion, identifiant mauvais ?')
+    if not login(USER, PASSW):
         raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
     
-    del (__login)
     #print getVoteVerif()
     VoteId = 3
     while VoteId < 5:
@@ -112,25 +109,17 @@ def main():
         try:
             souspage = decoupe()[0]
         except:
-            log.log('Erreur source incorrecte (deja vote ?)')
             raise Exception('Erreur source incorrecte (deja vote ?)')
         #print souspage
         hex = getHex(souspage)
         #print hex
         css = getcss(souspage, hex)
         
-        #print config.urltomake % (VoteId, getVoteVerif(), css)
-        request = urllib2.Request(config.voteUrl + 
-                                   str(config.urltomake % (VoteId, getVoteVerif(), css)), None, request_headers)
+        request = urllib2.Request('http://millenium-servers.com/newvoter.php' + 
+                                   str("""?voteID=%s&voteVerif=%s&__c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
         url = urlOpener.open(request)
         VoteId += 1
-        if url.read(500000).find('VOTE')!=1:
-            
-            config.writeTime()
-            log.log('Vote reussi avec %s sur %s'%(user,config.getTopName(VoteId-1)))
-        
-    
-    
+        print url.read(500000) # on lit tout
 
 
 
@@ -141,6 +130,15 @@ def main():
 if __name__ == '__main__':
     try:
         main()
+        print 'Content-type: text/html'
+        print
+        print '<html><head><title>...'
+        print '''Vote</title>
+             </head>
+             <body>
+                  <p>Vote Ok</p>
+             </body>
+        </html>'''
     except Exception as inst:
             print inst # __str__ allows args to printed directly
             #proxy.changeIp()
