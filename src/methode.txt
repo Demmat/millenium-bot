@@ -1,0 +1,66 @@
+---- Use u Brain !! ---
+
+
+Fonction de merde :
+
+function Voter(id, vote_url, verif_css, caller)
+				{
+					var url = "";
+					var compte = document.getElementById('txtCompte');
+					var imv = document.getElementById('txtImV');
+																											// ----------------\/---------------
+					var m_url = "newvoter.php?voteID=" + id + "&voteVerif=f5a61c&c=temp&css=" + verif_css; 	//le vote verif est aleatoire apparament ...
+					
+					new Request.HTML(
+					{
+						url: (m_url),
+						onSuccess: function(responseTree, responseElements, responseHTML, responseJavaScript)
+						{
+							if(responseHTML == "OK_POINT")
+							{
+								$(caller).set('html', "<br/><span style='color:green; font-size:1.1em;'>Vous avez re&ccedil;u 1 point</span><br/>");
+								caller.set('href', '#');
+								caller.set('onClick', '');
+								caller.set('target', '');
+							}
+							else if(responseHTML == "OK_VOTE")
+							{
+								$(caller).set('html', "<br/><span style='color:lightgreen; font-size:1.1em;'>Merci d'avoir vot&eacute;, vous devez alider votre vote sur le top pour recevoir votre point M !</span><br/>");
+								caller.set('href', '#');
+								caller.set('onClick', '');
+								caller.set('target', '');
+							}
+							else
+							{
+								$(caller).set('html', "<br/><span style='color:red; font-size:1.1em;'>Une erreur s'est produite : " + responseHTML + "</span><br/>");
+								caller.set('href', '#');
+								caller.set('onClick', '');
+								caller.set('target', '');
+							}
+						}
+					}).send();
+				}
+				
+				
+Analyse : 
+
+Il suffit de construire une url (la `m_url`) et c'est tout ! 
+
+Pour cela on a besoin: 
+	id := {3 : rpgparadiseWOW, 4 : rpgMINECRAFT}
+	
+	voteVerif : a reconnaitre avec regex (crée aleatoirement ?)
+	
+	c=temp ???
+	
+	css := Analyse avec un regex aussi (c'est un nombre a plusieurs chiffre).
+	
+Pour cette derniere variable, on la remarque car il suffit de chercher '.#######{display: inline;}' (les # sont des hex du style 'af2bc0e')
+puis on cherche encore une fois '#######' si on retrouve, on a win .
+
+En effet, lors de la seconde recheche le '#######' se trouve dans une ligne comme celle la : 
+<a href="http://www.rpg-paradize.com/?page=vote&vote=5846" target="_blank" onClick="Voter(3, '', 63, this);" class="#######"> <img src="http://millenium-servers.com/img/vote-mi.png"/> </a>
+Et comme par magie, le css est le 3em argument de Voter 
+(avec l'exemple ci dessus, on a onClick="Voter(3, '', 63, this);"  Donc css = 63.)
+
+
