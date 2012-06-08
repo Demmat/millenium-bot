@@ -125,8 +125,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-    raw_input()
+    try:
+        main()
+    except Exception as inst:
+            print inst # __str__ allows args to printed directly
+            #proxy.changeIp()
+    finally:
+        raw_input()
 
 
 
