@@ -21,6 +21,9 @@ import cookielib
 import urllib
 import urllib2
 
+import args
+
+
 
 #Globals
 
@@ -96,9 +99,19 @@ def login(user, passw):
 
 
     
-def main():
-    __login = config.getLogin()
-    user =str(__login['user'])
+def main(user=None, passw=None):
+    if not user or not passw:
+        __login = args.getargs() #
+        
+        if not  __login:
+            __login = config.getLogin()
+        
+        user = str(__login['user'])
+        
+    else:
+        __login = {'user':user, 'passw':passw}
+    
+    
     if not login(user, __login['passw']):
         log.log('Erreur lors de la connexion, identifiant mauvais ?')
         raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
@@ -124,10 +137,11 @@ def main():
                                    str(config.urltomake % (VoteId, getVoteVerif(), css)), None, request_headers)
         url = urlOpener.open(request)
         VoteId += 1
-        if url.read(500000).find('VOTE')!=1:
-            
+        if url.read(500000).find('VOTE') != 1:
+            success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
+            print success
             config.writeTime()
-            log.log('Vote reussi avec %s sur %s'%(user,config.getTopName(VoteId-1)))
+            log.log(success)
         
     
     
@@ -145,7 +159,7 @@ if __name__ == '__main__':
             print inst # __str__ allows args to printed directly
             #proxy.changeIp()
     finally:
-        raw_input()
+        raw_input('\n\n>>> Tapez entre pour continue')
 
 
 

@@ -18,6 +18,9 @@ import sys
 
 from time import strftime, localtime, strptime, mktime
 
+from LogIt import logit as logclass
+logit = logclass()
+
 class config(object):
     '''
     Config du bot
@@ -40,8 +43,16 @@ class config(object):
         self.urltomake = """?voteID=%s&voteVerif=%s&__c=temp&css=%s"""
         
         #db
+        if not os.path.exists('config.db'):
+            logit.log("Erreur, retelecharger le programme")
+            raise Exception("""Erreur, retelecharger le programme""")
+        
         self.__conn = sqlite3.connect('config.db')
         self.__c = self.__conn.cursor()
+        
+    def __del__(self):
+        del(self.__c)
+        self.__conn.close()
         
     def getLogin(self):
         '''Retourne un dict contenant l'utilisateur et le password.'''
@@ -49,6 +60,7 @@ class config(object):
         self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="user"')
         user = str(self.__c.fetchone()[0])
         if user == "_":
+            logit.log("Vous devez lancer au moins une fois l'utilitaire de configuration.")
             raise Exception("Vous devez lancer au moins une fois l'utilitaire de configuration.")
         
         self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="passw"')

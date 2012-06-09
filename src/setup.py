@@ -14,7 +14,10 @@ setup(console=[{
     'icon_resources':[(1, '.\\ico\\cfg.ico')]
 }])
 
-setup(console=['.\\vote.py'])
+setup(console=[{
+    'script':'vote.py',
+    'icon_resources':[(1, '.\\ico\\tri.ico')]
+}])
 
 setup(windows=[{
     'script':'launch.py',
