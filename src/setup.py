@@ -8,12 +8,21 @@ sys.argv.append('py2exe')
 
 
 
-setup(console=['.\\config.py'])
+#setup(console=['.\\config.py'])
+setup(console=[{
+    'script':'config.py',
+    'icon_resources':[(1, '.\\ico\\cfg.ico')]
+}])
+
 setup(console=['.\\vote.py'])
 
 setup(windows=[{
     'script':'launch.py',
-    'icon_resources':[(1, 'wow.ico')]
+    'icon_resources':[(1, '.\\ico\\wow.ico')]
+}])
+setup(windows=[{
+    'script':'svote.py',
+    'icon_resources':[(1, '.\\ico\\gf.ico')]
 }])
 
 #setup(windows=[{
