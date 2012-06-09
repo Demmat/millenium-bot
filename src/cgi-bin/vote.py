@@ -128,22 +128,21 @@ def main():
 
 
 if __name__ == '__main__':
+	print 'Content-type: text/html'
+	print
+	print '<html><head><title>...'
+	print '''Vote</title>
+		 </head>
+		 <body>
+			  <p>Vote</p>
+		 </body>
+	</html>'''
     try:
         main()
-        print 'Content-type: text/html'
-        print
-        print '<html><head><title>...'
-        print '''Vote</title>
-             </head>
-             <body>
-                  <p>Vote Ok</p>
-             </body>
-        </html>'''
+		print 'ok'
     except Exception as inst:
             print inst # __str__ allows args to printed directly
             #proxy.changeIp()
-    finally:
-        raw_input()
 
 
 
