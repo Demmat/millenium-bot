@@ -17,11 +17,12 @@ import re
 import LogIt
 
 # nav on Web import
-import cookielib
+
 import urllib
 import urllib2
 
 import args
+from MyUrlOpener import urlOpener
 
 
 
@@ -34,13 +35,6 @@ pageVote = "" #Global contenant la page de vote
 request_headers = { 'User-Agent': config.getHeader() }
 
 log = LogIt.logit()
-
-
-
-
-# On active le support des cookies pour urllib2
-cookiejar = cookielib.CookieJar()
-urlOpener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar))
 
 
 
