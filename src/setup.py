@@ -51,7 +51,7 @@ setup(windows=[{
     zipfile=None,)
 
 
-setup(console=[{
+setup(windows=[{
     'script':'proxyVote.py',
     'icon_resources':[(1, '.\\ico\\tor1.ico')]
 }],

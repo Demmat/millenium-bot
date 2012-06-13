@@ -110,7 +110,7 @@ def main(user=None, passw=None):
     else:
         __login = {'user':user, 'passw':passw}
     
-    
+    #on se log et on obtient un cookie :)
     if not login(user, __login['passw']):
         log.log('Erreur lors de la connexion, identifiant mauvais ? | %s' %(user))
         raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
