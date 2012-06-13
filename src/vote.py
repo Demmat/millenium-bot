@@ -145,9 +145,9 @@ def main(user=None, passw=None):
         if str(url.read(500000)).find('OK_VOTE') != -1: # sucess
             success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
             print success
+            log.log(success)
             if VoteId>4:
                 config.writeTime()
-                log.log(success)
                 return 1
         
     
