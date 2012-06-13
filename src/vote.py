@@ -136,7 +136,8 @@ def main(user=None, passw=None):
                                    str(config.urltomake % (VoteId, getVoteVerif(), css)), None, request_headers)
         url = urlOpener.open(request)
         VoteId += 1
-        if url.read(500000).find('VOTE') != 1:
+        
+        if str(url.read(500000)).find('OK_VOTE') != -1:
             success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
             print success
             config.writeTime()

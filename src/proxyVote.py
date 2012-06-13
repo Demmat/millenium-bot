@@ -69,7 +69,7 @@ def voteall():
                 if res == 1:
                     time_out = 0
                     print 'ok'
-                elif str(res).find('\t erreur de Proxy'):
+                elif str(res).find('erreur de Proxy')!=-1:
                     import LogIt
                     log = LogIt.logit()
                     log.log('Ce proxy semble ne semble pas fonctionel : %s' % (proxys.getCurrentProxy()))
