@@ -58,6 +58,13 @@ setup(windows=[{
     options={'py2exe': {'bundle_files': 1}},
     zipfile=None,)
 
+setup(windows=[{
+    'script':'update_prep.py',
+    'icon_resources':[(1, '.\\ico\\update.ico')]
+}],
+    options={'py2exe': {'bundle_files': 1}},
+    zipfile=None,)
+
 
 #setup(windows=[{
 #    'script':'HttpProxy_Build.py',

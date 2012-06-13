@@ -24,6 +24,9 @@ import urllib2
 import args
 import MyUrlOpener
 
+from time import sleep
+from random import random
+
 
 
 
@@ -99,15 +102,17 @@ def login(user, passw):
 def main(user=None, passw=None):
     '''Do all ...
     Retourne 1 si vote ok'''
-    if not user or not passw:
+    
+    #on cherche les identifiants
+    if not user or not passw:   #id en param
         __login = args.getargs() #
         
-        if not  __login:
+        if not  __login:    #id en arguments
             __login = config.getLogin()
         
         user = str(__login['user'])
         
-    else:
+    else: # autement id dans la db
         __login = {'user':user, 'passw':passw}
     
     #on se log et on obtient un cookie :)
@@ -117,32 +122,33 @@ def main(user=None, passw=None):
     
     del (__login)
     #print getVoteVerif()
-    VoteId = 3
+    
+    VoteId = 3  #voir la fonction javascript
     while VoteId < 5:
+        
+        sleep(random()*7)#Wait max 7 sec (pour simulé un vote cpatcha)
+        
         dlPageVote()
-        #print pageVote
         try:
             souspage = decoupe()[0]
         except:
             log.log('Erreur source incorrecte (deja vote ?)| %s' %(user))
             raise Exception('Erreur source incorrecte (deja vote ?)')
-        #print souspage
-        #hex = getHex(souspage)
-        #print hex
+        
         css = getcss(souspage, getHex(souspage))
         
-        #print config.urltomake % (VoteId, getVoteVerif(), css)
         request = urllib2.Request(config.voteUrl + 
                                    str(config.urltomake % (VoteId, getVoteVerif(), css)), None, request_headers)
         url = urlOpener.open(request)
         VoteId += 1
         
-        if str(url.read(500000)).find('OK_VOTE') != -1:
+        if str(url.read(500000)).find('OK_VOTE') != -1: # sucess
             success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
             print success
-            config.writeTime()
-            log.log(success)
-            return 1
+            if VoteId>4:
+                config.writeTime()
+                log.log(success)
+                return 1
         
     
     

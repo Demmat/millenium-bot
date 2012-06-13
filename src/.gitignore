@@ -7,3 +7,5 @@
 /proxy.txt
 /log.txt
 /vproxy.txt
+
+*.pyc
