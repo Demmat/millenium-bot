@@ -140,8 +140,8 @@ if __name__ == '__main__':
     try:
         main()
         print 'ok'
-    except Exception as inst:
-            print inst # __str__ allows args to printed directly
+    except Exception,strerror:
+            print strerror 
             #proxy.changeIp()
 
 
