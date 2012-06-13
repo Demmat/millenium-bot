@@ -15,8 +15,11 @@ import socket
 import md5
 import os
 import sys
+import random
 
-from time import strftime, localtime, strptime, mktime
+from Crypto.Cipher import AES
+
+from time import strftime, localtime, strptime, mktime, time
 
 from LogIt import logit as logclass
 logit = logclass()
@@ -35,24 +38,26 @@ class config(object):
             os.chdir(os.path.dirname(sys.argv[0]))
         except:
             pass
+        finally:
+            os.chdir('./config')
         
         self.voteUrl = 'http://millenium-servers.com/newvoter.php'
         
         self.VoteVerifStr = """var m_url = "newvoter.php?voteID=" + id + "&voteVerif="""
         
-        self.urltomake = """?voteID=%s&voteVerif=%s&__c=temp&css=%s"""
+        self.urltomake = """?voteID=%s&voteVerif=%s&__c=temp&css=%s""" #%s => a remplacer
         
         #db
         if not os.path.exists('config.db'):
             logit.log("Erreur, retelecharger le programme")
             raise Exception("""Erreur, retelecharger le programme""")
         
-        self.__conn = sqlite3.connect('config.db')
-        self.__c = self.__conn.cursor()
+        self.conn = sqlite3.connect('config.db')
+        self.__c = self.conn.cursor()
         
-    def __del__(self):
-        del(self.__c)
-        self.__conn.close()
+#    def __del__(self):
+#        del(self.__c)
+#        self.conn.close()
         
     def getLogin(self):
         '''Retourne un dict contenant l'utilisateur et le password.'''
@@ -64,25 +69,25 @@ class config(object):
             raise Exception("Vous devez lancer au moins une fois l'utilitaire de configuration.")
         
         self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="passw"')
-        passw = self.__decrypt(self.__c.fetchone()[0])
+        passw = self.decrypt(self.__c.fetchone()[0])
         
         return {'user':user, 'passw':passw}
         
         
     def setLogin(self, user, passw):
         user = (str(user),)
-        passw = (self.__crypt(passw),)
+        passw = (self.crypt(passw),)
         self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='user')""", user)
         self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='passw')""", passw)
-        self.__conn.commit()
+        self.conn.commit()
         
     def getHeader(self):
         self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="User-Agent"')
         return str(self.__c.fetchone()[0])
     
-    def getTopName(self,id):
-        id=(int(id),)
-        self.__c.execute('SELECT Nom FROM "main"."TOP" WHERE VoteId=?',id)
+    def getTopName(self, id):
+        id = (int(id),)
+        self.__c.execute('SELECT Nom FROM "main"."TOP" WHERE VoteId=?', id)
         return str(self.__c.fetchone()[0])
         
     
@@ -93,7 +98,7 @@ class config(object):
         '''Ecrit le temps actuel dans la db'''
         curtime = (strftime("%d/%m/%Y %H:%M", localtime()),)
         self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='lastrun')""", curtime)
-        self.__conn.commit()
+        self.conn.commit()
             
     def getTime(self):
         '''retourne un objet temp qui est stock� dans la db'''
@@ -123,71 +128,98 @@ class config(object):
     
     
     
-    def __crypt(self, string):
+    def crypt(self, string):
         """Algo de keke ..."""
         
-        def encipher(S, n=3):
-            small = "abcdefghijklmnopqrstuvwxyz"
-            big = small.upper()
-            size = len(big) - 1
-            finale_str = ''
-            for c in S:
-                if c.islower():
-                    if (small.find(c) + n) > size:
-                        c = small[(small.find(c) + n) - (size + 1)]
-                    else:
-                        c = small[small.find(c) + n]
-                elif c.isupper():
-                    if (big.find(c) + n) > size:
-                        c = big[(big.find(c) + n) - (size + 1)]
-                    else:
-                        c = big[big.find(c) + n]
-                finale_str += c
-            return finale_str
+        def encipher(S):
+            return AES.new(self.__getComputerMD5Name(),AES.MODE_PGP).encrypt(S)
         
         computerName = self.__getComputerMD5Name()
         string = encipher(string)
         return b64encode(zlib.compress(string) + computerName[0:int(computerName[-1], 16)])
     
-    def __decrypt(self, cstring):
+    def decrypt(self, cstring):
         """Algo de kiki ..."""
         
         def decipher(S, n=3):
-            small = "abcdefghijklmnopqrstuvwxyz"
-            big = small.upper()
-            size = len(big) - 1
-            finale_str = ''
-            for c in S:
-                if c.islower():
-                    if (small.find(c) - n) < 0:
-                        c = small[size - small.find(c) - (n - 1)]
-                    else:
-                        c = small[small.find(c) - n]
-                elif c.isupper():
-                    if (big.find(c) - n) < 0:
-                        c = big[size - big.find(c) - (n - 1)]
-                    else:
-                        c = big[big.find(c) - n]
-                finale_str += c
-            return finale_str
+            return AES.new(self.__getComputerMD5Name(),AES.MODE_PGP).decrypt(S)
         
         computerName = self.__getComputerMD5Name()
         return decipher(zlib.decompress(b64decode(cstring).replace(computerName[0:int(computerName[-1], 16)], '')))
+    
+    def useProxy(self):
+        try:
+            os.chdir(os.path.dirname(sys.argv[0]))
+        except:
+            pass
+        return os.path.exists('./proxy.txt') # TODO mieux
+    
+        
+### -------------------------------------------       
+
+ 
+class ProxyConfig(config):
+    
+    def __init__(self):
+        config.__init__(self)
+        self.__c = self.conn.cursor()
+        
+        
+    def setLogin(self , user, passw, id=None):
+        sqlparma = [str(user), self.crypt(passw), ]
+        if id != None:
+            sqlparma.insert(0, int(id))
+            self.__c.execute("""INSERT OR REPLACE INTO "main"."multiacc" (prior, user, passw) VALUES (?, ?, ?);""", sqlparma)
+            self.conn.commit()
+        else:
+            self.__c.execute("""INSERT OR REPLACE INTO "main"."multiacc" (user, passw) VALUES (?, ?);""", sqlparma)
+            self.conn.commit()
+    
+    def writeTime(self, user=None):
+        
+        config.writeTime(self)
+        if user != None:
+            #print time()
+            self.__c.execute("""UPDATE "main"."multiacc" SET "lastVote"=strftime('%s','now') WHERE ("user"=?);""", (str(user),))
+            self.conn.commit()
+            
+    def getReadyacc(self):
+        '''Retourne un tuple de dict de tous les comptes qui on voté il y a plus de 2h'''      
+        self.__c.execute(
+         """SELECT
+                multiacc.user,
+                multiacc.passw
+            FROM
+                multiacc
+            WHERE
+                strftime('%s', 'now') - multiacc.lastVote > ?
+            GROUP BY
+                multiacc.user
+            ORDER BY
+                multiacc.prior ASC ;""",(int(2*60*60+random.random()*60*3),))
+            
+        return tuple({'user':str(item[0]),'passw':self.decrypt(item[1])} for item in self.__c.fetchall())
+    
         
         
         
-        
+    
+### -------------------------------------------        
+
 if __name__ == '__main__':
     debug = 0
     
     if debug:
-        
-        a = config()
+        a = ProxyConfig()
+#        a = config()
         print a.getTime()
         a.writeTime()
         print a.getTime()
         print a.difTime()
         print a.getTopName(3)
+        print a.getReadyacc()
+        #a.setLogin('coucou', 'passw')
+        #a.writeTime('se')
         
         
     else:

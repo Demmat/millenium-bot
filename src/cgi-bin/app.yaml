@@ -1,0 +1,9 @@
+application: votebotmillenium
+version: 1
+runtime: python2
+api_version: 1
+threadsafe: no
+
+handlers:
+- url: /.*
+  script: vote.py

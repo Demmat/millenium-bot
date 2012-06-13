@@ -214,3 +214,28 @@ if __name__ == "__main__":
     # When all tasks are finished, allow the threads to terminate
     pool.joinAll()
 ## end of http://code.activestate.com/recipes/203871/ }}}
+
+
+
+def timeout(func, args=(), kwargs={}, timeout_duration=30, default=None):
+    """This function will spawn a thread and run the given function
+    using the args, kwargs and return the given default value if the
+    timeout_duration is exceeded.
+    """ 
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = default
+            self.daemon = True
+        def run(self):
+            try:
+                self.result = func(*args, **kwargs)
+            except Exception as inst:
+                print inst
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.isAlive():
+        return it.result
+    else:
+        return it.result

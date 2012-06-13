@@ -1,7 +1,7 @@
 Dans ce Dossier se trouve un script python simplifier pour voter sur millenuim 
 ( ie pas d'utilisation de sqlite ni de class config et autre fonctionnalité )
 
-Pour l'installer sur un server web possedant cgi-python, 
+Pour l'installer sur un server web possedant cgi-python (on peut aussi le mettre sur Google app engine), 
 
 	Il faut tout d'abord configurer le script pour cela :
 	

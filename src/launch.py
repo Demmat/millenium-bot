@@ -5,6 +5,7 @@ Created on 8 juin 2012
 '''
 import vote
 from time import sleep
+from random import random
 
 if __name__ == '__main__':
     while 1:
@@ -16,4 +17,4 @@ if __name__ == '__main__':
             if str(inst)=='Erreur lors de la connexion, identifiant mauvais ?':
                 raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
             pass
-        sleep(2*60*60)
+        sleep(2*60*60+random()*5*60)

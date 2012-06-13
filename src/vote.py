@@ -22,11 +22,14 @@ import urllib
 import urllib2
 
 import args
-from MyUrlOpener import urlOpener
+import MyUrlOpener
+
+
 
 
 
 #Globals
+urlOpener = MyUrlOpener.urlOpener
 
 config = cfg.config()
 
@@ -94,6 +97,8 @@ def login(user, passw):
 
     
 def main(user=None, passw=None):
+    '''Do all ...
+    Retourne 1 si vote ok'''
     if not user or not passw:
         __login = args.getargs() #
         
@@ -107,7 +112,7 @@ def main(user=None, passw=None):
     
     
     if not login(user, __login['passw']):
-        log.log('Erreur lors de la connexion, identifiant mauvais ?')
+        log.log('Erreur lors de la connexion, identifiant mauvais ? | %s' %(user))
         raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
     
     del (__login)
@@ -119,12 +124,12 @@ def main(user=None, passw=None):
         try:
             souspage = decoupe()[0]
         except:
-            log.log('Erreur source incorrecte (deja vote ?)')
+            log.log('Erreur source incorrecte (deja vote ?)| %s' %(user))
             raise Exception('Erreur source incorrecte (deja vote ?)')
         #print souspage
-        hex = getHex(souspage)
+        #hex = getHex(souspage)
         #print hex
-        css = getcss(souspage, hex)
+        css = getcss(souspage, getHex(souspage))
         
         #print config.urltomake % (VoteId, getVoteVerif(), css)
         request = urllib2.Request(config.voteUrl + 
@@ -136,6 +141,7 @@ def main(user=None, passw=None):
             print success
             config.writeTime()
             log.log(success)
+            return 1
         
     
     

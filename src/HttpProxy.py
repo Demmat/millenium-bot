@@ -11,11 +11,11 @@ import re
 import time
 import urllib2
 import cookielib
-from Queue import Queue
 
 
 from MyUrlOpener import urlOpener
 from ThreadPool import ThreadPool
+from ThreadPool import timeout as tmout
 
 
 
@@ -40,8 +40,8 @@ def getMyIp(urlO=None):
 
 
 #### -------------------------------------------
-class proxy():
-    '''Stocke un proxy HTTP, c'est a dire son adresse et son port'''
+class Proxy():
+    '''Stocke un Proxy HTTP, c'est a dire son adresse et son port'''
     
     def __init__(self, addresse, port):
         self.url = addresse
@@ -55,25 +55,28 @@ class proxy():
         return str(self.url) + ':' + str(self.port)
     
     def makeTheUrlOpener(self):
-        '''Crée un objet urllib2 opener avec le proxy'''
-        # On cree un handler pour le proxy et pour les cookies:
+        '''Crée un objet urllib2 opener avec le Proxy'''
+        # On cree un handler pour le Proxy et pour les cookies:
         proxy_support = urllib2.ProxyHandler({"http" : "http://%(host)s:%(port)d" % self()})
         cookiejar = cookielib.CookieJar()
         return urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar), proxy_support)
                     
     #----------------------------------------------------------------------
     def verif(self, verif=False):
-        """tente de se connecter avec le proxy"""
+        """Tente de se connecter avec le Proxy"""
 
-        urlO = self.makeTheUrlOpener()
+        
         try:
-            ip = getMyIp(urlO)
+            urlO = tmout(self.makeTheUrlOpener)
+            ip = tmout(getMyIp,(urlO,)) #getMyIp(urlO)
             if verif:
                 ip.index(str(self.url))
+            if not ip:
+                raise Exception('Impossible de se connecte en moins de 30 sec')
             
         
         except Exception as inst:
-            print '\terreur de proxy : %s' % (inst)
+            print '\terreur de Proxy : %s' % (inst)
             #print type(inst) # the exception instance
             #print inst.args # arguments stored in .args
             pass
@@ -84,17 +87,44 @@ class proxy():
 
 
 #### -------------------------------------------
-class proxyroller():
-    '''Gestion de multiples proxys'''
+class ProxyRot():
+    '''Gestion de multiples proxys
+    on call : retourne un urlOpener du prochain proxy en cours'''
+    
+    
+    #### ------------- Magic Methods -------------
     def __init__(self):
         self.goodproxy = []
-        self.indice = int(0)
+        self.indice = 0
         
+    def __iter__(self):
+        return iter(self.goodproxy)
+    
+    def __len__(self):
+        return len(self.goodproxy)
+    
+    def __getitem__(self, key):
+        return self.goodproxy[key]
+    
+    
+    def __setitem__(self, key, value):
+        if isinstance(value, Proxy):
+            self.goodproxy[key] = value
+            
+    def __delitem__(self, key):
+        del self.goodproxy[key]
+    
+    def __call__(self):
+        '''Retourne l'urlopener du prochain Proxy sur la liste. '''
+        return self.nextGoodProxy().makeTheUrlOpener()
         
-        
-    def verifAllProxy(self, pfile='proxy.txt', out=None, threadnbr=15):
+    #### --------------------------
+    
+    def getCurrentProxy(self):
+        return self.goodproxy[self.indice]
+    def verifAllProxy(self, pfile='Proxy.txt', out=None, threadnbr=15):
         '''Verification de tous les proxys du fichier (pfile).
-        Peut enregistrer le proxy verifier dans un fichier (out)
+        Peut enregistrer le Proxy verifier dans un fichier (out)
         Methode a amelioré. '''
         proxys = self.getProxysFromFile(pfile)
         
@@ -115,16 +145,25 @@ class proxyroller():
             
         timeout = (len(proxys) / threadnbr * 30 + 5) * 1.5
         print 'Temps max : %s' % timeout
-        time.sleep(timeout)
+        #time.sleep(timeout)
         #print 'arret'
-        pool.joinAll(False, False)
+        
         #print self.goodproxy
+        
+        #TOTO mieux
+        count = 0
+        while pool.getThreadCount()>0:
+            time.sleep(1)
+            count+=1
+            if count>timeout:
+                pool.joinAll(False, False)
+            #print pool.getThreadCount()
         
         if out != None:
             with open(out, 'w') as pvfile:
-                for proxy in self.goodproxy:
-                    print str(proxy)
-                    pvfile.write(str(proxy) + '\n')
+                for Proxy in self.goodproxy:
+                    print str(Proxy)
+                    pvfile.write(str(Proxy) + '\n')
         
         
                         
@@ -141,23 +180,27 @@ class proxyroller():
         proxys = []
     
         for unformated in proxytmp:
-            prox = proxy(str(re.findall('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', unformated)[0]), int(re.findall('\:\d{1,4}', unformated)[0][1:]))
+            prox = Proxy(str(re.findall('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', unformated)[0]), int(re.findall('\:\d{1,4}', unformated)[0][1:]))
             proxys.append(prox)
     
         del(proxytmp)
-        #for proxy in proxys:
-            #print proxy
+        #for Proxy in proxys:
+            #print Proxy
         if force:
             self.goodproxy = proxys
         return proxys
     
-    def nextproxy(self):
-        '''retourne le prochain proxy de la liste'''
+    def nextGoodProxy(self):
+        '''retourne le prochain Proxy valide de la liste'''
+        
+        #TODO : yield 
+        #for prox in self.__goodproxy:
+            
         try:
-            while not self.__goodproxy[self.indice].verif():
+            while not self.goodproxy[self.indice].verif():
                 self.indice += 1
                 
-            proxy = self.__goodproxy[self.indice]
+            proxy = self.goodproxy[self.indice]
         except:
             raise Exception('Pas asser de proxys.')
         self.indice += 1
@@ -175,17 +218,14 @@ if __name__ == '__main__':
     
     
     if debug:
-        prox = proxy('121.96.83.151', 80)
+        prox = Proxy('121.96.83.151', 80)
         print prox()
         prox.verif()
-        proxs = proxyroller()
-        for prox in proxs.getProxysFromFile():
-            print prox
-        proxs.verifAllProxy(out='vproxy.txt', threadnbr=50)
-        for prox in proxs.goodproxy:
-            print prox
-        while 1:
-            print proxs.nextproxy()
+        proxs = ProxyRot()
+        print proxs.getProxysFromFile('vproxy.txt',force=1)
+        print proxs.goodproxy
+        print proxs.nextGoodProxy()
+        print proxs()
     else:
         
     
@@ -212,14 +252,22 @@ if __name__ == '__main__':
             pfile = sys.argv[1]
             save = sys.argv[2]
             
-        proxs = proxyroller()
-        proxs.verifAllProxy(pfile, out='vproxy.txt', threadnbr=250)
+        proxs = ProxyRot()
+        
+        def countnombrligne(pfile):
+            #pf = open('a')
+            with open(pfile, 'r') as pf:
+                return len(pf.readlines())
+            
+            
+            
+        proxs.verifAllProxy(pfile, out='vproxy.txt', threadnbr=40)
         os.kill(os.getpid(), signal.SIGINT) # TODO pas de kill a la keke
         
     
 #        
 #    
-#    pr = proxy()
+#    pr = Proxy()
 #    pr.verifAllProxy(pfile, save)
 #    
 ##    os.mkdir("bck" )
