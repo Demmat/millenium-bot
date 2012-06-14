@@ -8,10 +8,10 @@ from HttpProxy import ProxyRot, getMyIp
 from ThreadPool import ThreadPool,timeout
 from base64 import b64decode, b64encode
     
-import LogIt
-import MyUrlOpener
+
+
 import args
-import config
+#import config
 import cookielib
 import ctypes
 import getopt
@@ -28,10 +28,11 @@ import threading
 import time
 import urllib
 import urllib2
-import vote
 import xlrd
 import zlib
-import proxyVote
+
+
+import multivote,svote,proxyVote,vote,config,LogIt,MyUrlOpener
 
 
 

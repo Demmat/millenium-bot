@@ -7,12 +7,14 @@ Pour Service sous Windows
 '''
 import os
 import sys
-from random import random
 
-import vote
+import proxyVote
+import multivote
+
 import config as cfg
 
 config = cfg.config()
+
 
 
 if __name__ == '__main__':
@@ -21,18 +23,9 @@ if __name__ == '__main__':
     except:
         pass
     if not config.useProxy():
-        try:
-            print config.difTime()
-            if config.difTime() < 2 * 60 * 60 + random() * 5 * 60:
-                sys.exit()
-            else:
-                del(config)
-                vote.main()
-                
-        except Exception as inst:
-            print inst #
-            pass
-    else:
         del(config)
-        import proxyVote
+        multivote.voteall()
+    else:
+        print 'proxy mode'
+        del(config)
         proxyVote.main()

@@ -1,0 +1,56 @@
+==== 	Comment configurer Le bot	====
+	
+	Configuration de Base :
+	
+	
+	
+	1. 	Ouvrir à l'aide d'un tableur le fichier 'acc.xls' contenu dans le dossier 'confins' du bot.
+		Note :	Si vous ne possédez pas de tableur (ie Excel, OpenOffice), 
+				vous pouvez en télécharger un : http://portableapps.com/apps/office/gnumeric_portable (Windows)
+				
+	2.	Remplir chaque ligne (sauf la 1er) avec un nom de compte et son mot de passe associé.
+		Note : On peut (pour l'instant ?) voter avec de nombreux compte avec la même IP.
+	
+	3.	Enregistrer le fichier et bien FERMER le programme.
+	
+	4.	Lancer 'xlsRead' 
+		(ce programme lit les données du XLS, crypte les mots de passe et détruit le fichier XLS)
+		
+		
+	
+	Fin de la Config !
+	
+	
+	
+
+	
+	
+Si vous voulez passer le bot en Mode Proxy :
+	Ce mode permet d'utiliser des proxys pour voter avec plusieurs compte.
+
+	C'est assez simple, 
+	1. 	Crée un fichier nommé 'proxy.txt' contenant les proxys sous la forme 'Ip:port' (exemple : www.pastebay.net/1063308).
+	2. 	Optionnel : lancer 'HttpProxy.exe' pour vérifier les proxys 
+		Note : Cela enregistre les bons proxys dans 'vproxy.txt' que vous pouvez renommer 'proxy.txt')
+	
+	
+	C'est tout Bon,  les proxys seront utilisés lors du lancement de 'svote.exe' ou 'proxyVote.exe'
+	
+
+	
+Arrêt du mode Proxy:
+
+	Supprimer simplement le fichier 'proxy.txt'
+	
+	
+	
+		
+	
+	
+	
+	
+	
+
+		
+	
+

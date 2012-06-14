@@ -73,7 +73,8 @@ namespace ServiceRunner
             }
             catch (Exception ex)
             {
-                Helper.Log("Error: " + ex.Message);
+                ex.ToString(); //useless
+                //Helper.Log("Error: " + ex.Message);
             }
         }
 

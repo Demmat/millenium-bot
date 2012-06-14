@@ -32,6 +32,7 @@ from random import random
 
 
 #Globals
+
 urlOpener = MyUrlOpener.urlOpener
 
 config = cfg.config()

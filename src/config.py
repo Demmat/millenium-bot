@@ -60,26 +60,34 @@ class config(object):
 #        self.conn.close()
         
     def getLogin(self):
-        '''Retourne un dict contenant l'utilisateur et le password.'''
+        '''Retourne un dict contenant l'utilisateur (le 1er) et le password.'''
         
-        self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="user"')
-        user = str(self.__c.fetchone()[0])
-        if user == "_":
-            logit.log("Vous devez lancer au moins une fois l'utilitaire de configuration.")
-            raise Exception("Vous devez lancer au moins une fois l'utilitaire de configuration.")
+        self.__c.execute("""SELECT
+                multiacc.user,
+                multiacc.passw
+            FROM
+                multiacc
+            GROUP BY
+                multiacc.user
+            ORDER BY
+                multiacc.prior ASC 
+            LIMIT 1;""")
+        sqlres = self.__c.fetchone()
         
-        self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="passw"')
-        passw = self.decrypt(self.__c.fetchone()[0])
+        if not sqlres:
+            logit.log("Vous devez configurer le bot.")
+            raise Exception("Vous devez configurer le bot.")
+
         
-        return {'user':user, 'passw':passw}
+        return {'user':str(sqlres[0]),'passw':self.decrypt(sqlres[1])}
         
         
-    def setLogin(self, user, passw):
-        user = (str(user),)
-        passw = (self.crypt(passw),)
-        self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='user')""", user)
-        self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='passw')""", passw)
-        self.conn.commit()
+#    def setLogin(self, user, passw):
+#        user = (str(user),)
+#        passw = (self.crypt(passw),)
+#        self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='user')""", user)
+#        self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='passw')""", passw)
+#        self.conn.commit()
         
     def getHeader(self):
         self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="User-Agent"')
@@ -207,19 +215,21 @@ class ProxyConfig(config):
 ### -------------------------------------------        
 
 if __name__ == '__main__':
-    debug = 0
+    debug = 1
     
     if debug:
-        a = ProxyConfig()
-#        a = config()
-        print a.getTime()
-        a.writeTime()
-        print a.getTime()
-        print a.difTime()
-        print a.getTopName(3)
-        print a.getReadyacc()
+#        a = ProxyConfig()
+##        a = config()
+#        print a.getTime()
+#        a.writeTime()
+#        print a.getTime()
+#        print a.difTime()
+#        print a.getTopName(3)
+#        print a.getReadyacc()
         #a.setLogin('coucou', 'passw')
         #a.writeTime('se')
+        a = config()
+        print a.getLogin()
         
         
     else:

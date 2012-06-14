@@ -7,12 +7,8 @@ Created on 12 juin 2012
 import urllib2
 import os
 import sys
-import threading
-
-from time import sleep
 
 import vote
-import MyUrlOpener
 
 
 import config as cfg
@@ -20,18 +16,12 @@ import config as cfg
 from HttpProxy import ProxyRot, getMyIp
 from ThreadPool import timeout
 
+from MyUrlOpener import updateUrlOp
 
 #Global
 
 config = cfg.ProxyConfig()
 proxys = ProxyRot()
-
-def updateVoteUrlO(urlO):
-    '''Met a jour l'opener d'url du script de vote'''
-    if isinstance(urlO, urllib2.OpenerDirector):
-        vote.urlOpener = urlO
-    else:
-        raise Exception('is not instance of urllib2.OpenerDirector') # dev exception only
     
 
 def voteall():
@@ -64,12 +54,12 @@ def voteall():
         while time_out:
             print time_out
             try:
-                updateVoteUrlO(proxys())
+                updateUrlOp(proxys())
                 res = timeout(oneVote, kwargs=accinfo, timeout_duration=100)
                 if res == 1:
                     time_out = 0
                     print 'ok'
-                elif str(res).find('erreur de Proxy')!=-1:
+                elif str(res).find('Proxy')!=-1:
                     import LogIt
                     log = LogIt.logit()
                     log.log('Ce proxy semble ne semble pas fonctionel : %s' % (proxys.getCurrentProxy()))

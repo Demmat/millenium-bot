@@ -1,0 +1,35 @@
+Pour lancer le bot sous Linux-MacOs
+
+
+
+
+
+La manière simple (pas de support proxy):
+
+	- Télécharger les sources.
+	- Le lancer le botVote en tapant dans un Shell `python vote.py - u Login -p password` en remplaçant Login et password.
+	- Optionnel crée un cron (ie une tache planifier) qui lance toutes les 2 heures la commande ci-dessus. 
+		(voir GNOME Schedule pour une GUI).
+	-Pour le multicompte, suffit de crée plusieurs crons.
+
+	
+	
+	
+	
+	
+	
+
+Avancée - Pour avoir les toutes les fonctionnalités :
+
+	Vous avez besoin de :
+	
+		- Python 2.7 ou 2.6 # apt-get install python-dev
+		- pycrypto : www.dlitz.net/software/pycrypto/ (install possible avec pip)
+		- xlrd : pypi.python.org/pypi/xlrd (install possible avec pip)
+	
+	- Télécharger les sources.
+	- Configurer (voir Configurer.txt)
+	- Lancer avec `python lauch.py`
+	
+	
+

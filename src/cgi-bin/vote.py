@@ -97,8 +97,8 @@ def login(user, passw):
 
 
     
-def main():
-    if not login(USER, PASSW):
+def main(user=USER,passw=PASSW):
+    if not login(user, passw):
         raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
     
     #print getVoteVerif()

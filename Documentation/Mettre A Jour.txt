@@ -1,0 +1,5 @@
+Lancez simplement 'update.exe'.
+
+
+Note : 	Pour que la mise à jours se passe sans problème, le service (si celui-ci est installé) va être arrêté.
+		Vous pouvez le relancer grâce à 'ServiceInstaller.exe'  (en cliquant sur start) ou en redémarrant l'ordinateur

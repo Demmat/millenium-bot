@@ -9,3 +9,4 @@
 /vproxy.txt
 
 *.pyc
+/config
