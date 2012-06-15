@@ -15,9 +15,7 @@ import config as cfg
 
 config = cfg.config()
 
-
-
-if __name__ == '__main__':
+def main():
     try:
         os.chdir(os.path.dirname(sys.argv[0]))
     except:
@@ -29,3 +27,7 @@ if __name__ == '__main__':
         print 'proxy mode'
         del(config)
         proxyVote.main()
+
+
+if __name__ == '__main__':
+    main()

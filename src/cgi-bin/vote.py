@@ -37,8 +37,7 @@ request_headers = { 'User-Agent': 'Mozilla/5.0' }
 
 
 # On active le support des cookies pour urllib2
-cookiejar = cookielib.CookieJar()
-urlOpener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar))
+urlOpener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
 
 
 
