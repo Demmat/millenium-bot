@@ -51,26 +51,9 @@ setup(windows=[{
 }],
     options={'py2exe': {'bundle_files': 1}},)
 
-setup(windows=[{
-    'script':'update.py',
-    'icon_resources':[(1, '.\\ico\\update.ico')]
-}],
-    options={'py2exe': {'bundle_files': 1}},)
 
 
-
-
-setup(windows=[{
-    'script':'update.py',
-    'icon_resources':[(1, '.\\ico\\update.ico')]
-}],
-    options={'py2exe': {'bundle_files': 1,'excludes':Exclusion}},
-    zipfile = None,
-)
-
-
-
-
+#### TO BUILD Library.exe ##########
 setup(windows=[{
     'script':'__importall.py',
 }],
@@ -84,9 +67,4 @@ finally:
     os.chdir('./dist')
 
 os.remove('__importall.exe')
-
-#setup(windows=[{
-#    'script':'HttpProxy_Build.py',
-#    'icon_resources':[(1, 'wow.ico')]
-#}])    
 

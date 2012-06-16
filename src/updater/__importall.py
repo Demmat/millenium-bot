@@ -31,7 +31,6 @@ import urllib2
 import xlrd
 import zlib
 
-import multivote,svote,proxyVote,vote,config,LogIt,MyUrlOpener
 
 
 
