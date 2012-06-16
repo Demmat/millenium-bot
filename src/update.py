@@ -22,7 +22,7 @@ import shutil
 import urlparse
 import os
 
-import __importall
+import __importall #voir __importall !
 
 processName = ('MillenuimService.exe', 'svote.exe', 'vote.exe',
              'proxyVote.exe', 'launch.exe', 'xlsRead.exe', 'HttpProxy.exe',

@@ -16,6 +16,9 @@ import config as cfg
 config = cfg.config()
 
 def main():
+    
+    global config
+    
     try:
         os.chdir(os.path.dirname(sys.argv[0]))
     except:

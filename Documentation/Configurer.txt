@@ -4,7 +4,7 @@
 	
 	
 	
-	1. 	Ouvrir à l'aide d'un tableur le fichier 'acc.xls' contenu dans le dossier 'confins' du bot.
+	1. 	Ouvrir à l'aide d'un tableur le fichier 'acc.xls' contenu dans le dossier 'config' du bot.
 		Note :	Si vous ne possédez pas de tableur (ie Excel, OpenOffice), 
 				vous pouvez en télécharger un : http://portableapps.com/apps/office/gnumeric_portable (Windows)
 				

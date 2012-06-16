@@ -17,6 +17,6 @@ if __name__ == '__main__':
             elif str(inst)=='Erreur lors de la connexion, identifiant mauvais ?':
                 raise Exception('Erreur lors de la connexion, identifiant mauvais ?')
             else: 
-                raise(str(inst))
+                raise Exception(str(inst))
             pass
         sleep(60*60+random()*5*60) #Wait 1h + rand

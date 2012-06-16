@@ -31,7 +31,7 @@ import urllib2
 import xlrd
 import zlib
 
-
+#Comment this if build updater
 import multivote,svote,proxyVote,vote,config,LogIt,MyUrlOpener
 
 
