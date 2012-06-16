@@ -12,6 +12,10 @@ Created on 8 juin 2012
 USER = '___________________________'
 PASSW = '___________________________'
 
+
+ForceLogin = 0 	#Mettre a 1 si erreur 'Identifiant mauvais'
+				#Attention Si vos logins sont pas bon ça risque de faire planter le script !
+
 #######################################
 
 
@@ -90,7 +94,7 @@ def login(user, passw):
     data = urllib.urlencode(values)
     request = urllib2.Request("http://millenium-servers.com/index.php", data, request_headers)
     url = urlOpener.open(request)  #  cookiejar reçoit automatiquement les cookies
-    return url.read(5000000).find(str(user)) != -1
+    return url.read(5000000).find(str(user)) != -1 or ForceLogin
     
     #print page
 

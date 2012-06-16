@@ -105,15 +105,15 @@ def main(user=None, passw=None):
     Retourne 1 si vote ok'''
     
     #on cherche les identifiants
-    if not user or not passw:   #id en param
-        __login = args.getargs() #
+    if not user or not passw:   #id pas en param
+        __login = args.getargs() #en argument ?
         
-        if not  __login:    #id en arguments
-            __login = config.getLogin()
+        if not  __login:    #id pas en arguments
+            __login = config.getLogin() #Id dans la DB
         
         user = str(__login['user'])
         
-    else: # autement id dans la db
+    else: # autement id en param
         __login = {'user':user, 'passw':passw}
     
     #on se log et on obtient un cookie :)

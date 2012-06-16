@@ -8,9 +8,7 @@ Created on 15 juin 2012
 '''
 
 
-
 import vote
-
 
 
 
@@ -28,26 +26,21 @@ accs = [
 #Vous pouvez en ajouter ...
 
 #######################################
+
 ]
+
+#######################################
+ForceLogin = 0  #Mettre a 1 si erreur 'Identifiant mauvais'
+                #Attention Si vos logins sont pas bon ca risque de faire planter le script 
+#######################################
+
+
 
 
 
 def main():
-    pass
-
-
-if __name__ == '__main__':
-    print 'Content-type: text/html'
-    print
-    print '<html><head><title>'
-    print '''Multi-Vote</title>
-        </head>
-        <body>
-             <p>Vote</p>
-        </body>
-    </html>'''
     
-    
+    vote.ForceLogin=ForceLogin
     
     for acc in accs:
         
@@ -66,7 +59,24 @@ if __name__ == '__main__':
          ---------------------
          </p>'''
         vote.urlOpener = vote.urllib2.build_opener(\
-                        vote.urllib2.HTTPCookieProcessor(vote.cookielib.CookieJar()))
+                       vote.urllib2.HTTPCookieProcessor(vote.cookielib.CookieJar()))
+
+
+if __name__ == '__main__':
+    print 'Content-type: text/html'
+    print
+    print '<html><head><title>'
+    print '''Multi-Vote</title>
+        </head>
+        <body>
+             <p>Vote</p>
+        </body>
+    </html>'''
+    main()
+    
+    
+    
+    
 
 
 
