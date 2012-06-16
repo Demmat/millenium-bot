@@ -85,7 +85,6 @@ def main():
     except:
         pass
     proxys.getProxysFromFile(force=1)
-    print proxys.nextGoodProxy()
     voteall()
     
 

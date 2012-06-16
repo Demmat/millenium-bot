@@ -9,11 +9,11 @@ import os
 import sys
 
 import proxyVote
-import multivote
+import vote
 
 import config as cfg
 
-config = cfg.config()
+config = cfg.ProxyConfig()
 
 def main():
     
@@ -24,12 +24,21 @@ def main():
     except:
         pass
     if not config.useProxy():
+        __login = config.getReadyacc()
+        
+        if __login and config.getLogin() == __login[0]: # Login != None et c'est le premier compte:
+            __login = __login[0]
+            
+            if vote.main(__login['user'], __login['passw']) == 1: #vote success
+                print 'vote success'
+                config.writeTime(__login['user'])
+            
         del(config)
-        multivote.voteall()
     else:
         print 'proxy mode'
         del(config)
         proxyVote.main()
+    
 
 
 if __name__ == '__main__':
