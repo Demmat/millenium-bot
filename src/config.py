@@ -143,7 +143,7 @@ class config(object):
             return AES.new(self.__getComputerMD5Name(),AES.MODE_PGP).encrypt(S)
         
         computerName = self.__getComputerMD5Name()
-        string = encipher(string)
+        string = encipher(b64encode(string))
         return b64encode(zlib.compress(string) + computerName[0:int(computerName[-1], 16)])
     
     def decrypt(self, cstring):
@@ -153,7 +153,7 @@ class config(object):
             return AES.new(self.__getComputerMD5Name(),AES.MODE_PGP).decrypt(S)
         
         computerName = self.__getComputerMD5Name()
-        return decipher(zlib.decompress(b64decode(cstring).replace(computerName[0:int(computerName[-1], 16)], '')))
+        return b64decode(decipher(zlib.decompress(b64decode(cstring).replace(computerName[0:int(computerName[-1], 16)], ''))))
     
     def useProxy(self):
         try:
@@ -229,7 +229,10 @@ if __name__ == '__main__':
         #a.setLogin('coucou', 'passw')
         #a.writeTime('se')
         a = config()
-        print a.getLogin()
+        #print a.getLogin()
+        c = a.crypt(u'²&é"\'(-è_çà)=~#{[|`\^@]}azertyuiopqsdfghjklmwxcvbn0123456789,;:!<>^$ù*,;:!¨£%µ?./§')
+        print c
+        print a.decrypt(c)
         
         
     else:
