@@ -17,6 +17,8 @@ from MyUrlOpener import urlOpener
 from ThreadPool import ThreadPool
 from ThreadPool import timeout as tmout
 
+from jsoncfg import jsoncfg
+
 
 
 

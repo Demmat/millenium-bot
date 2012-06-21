@@ -26,26 +26,20 @@ logit = logclass()
 
 class config(object):
     '''
-    Config du bot
+    Gestion de la Config sqlite du bot
     '''
 
 
     def __init__(self):
         '''
         Constructor 
-        '''
+        ''' 
         try:
             os.chdir(os.path.dirname(sys.argv[0]))
         except:
             pass
         finally:
             os.chdir('./config')
-        
-        self.voteUrl = 'http://millenium-servers.com/newvoter.php'
-        
-        self.VoteVerifStr = """var m_url = "newvoter.php?voteID=" + id + "&voteVerif="""
-        
-        self.urltomake = """?voteID=%s&voteVerif=%s&__c=temp&css=%s""" #%s => a remplacer
         
         #db
         if not os.path.exists('config.db'):
@@ -88,7 +82,11 @@ class config(object):
 #        self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='user')""", user)
 #        self.__c.execute("""UPDATE "main"."cfg" SET "value"=? WHERE ("param"='passw')""", passw)
 #        self.conn.commit()
-        
+    
+    def getVersionNbr(self):
+        self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="Version"')
+        return str(self.__c.fetchone()[0])
+    
     def getHeader(self):
         self.__c.execute('SELECT value FROM "main"."cfg" WHERE param="User-Agent"')
         return str(self.__c.fetchone()[0])
@@ -232,7 +230,8 @@ if __name__ == '__main__':
         #print a.getLogin()
         c = a.crypt(u'²&é"\'(-è_çà)=~#{[|`\^@]}azertyuiopqsdfghjklmwxcvbn0123456789,;:!<>^$ù*,;:!¨£%µ?./§')
         print c
-        print a.decrypt(c)
+        print len(c)
+        print a.decrypt(c),len(a.decrypt(c))
         
         
     else:

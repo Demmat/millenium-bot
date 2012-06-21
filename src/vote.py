@@ -49,14 +49,15 @@ log = LogIt.logit()
 def dlPageVote():
     """Telecharge la page de vote en memoire"""
     global pageVote
-    request = urllib2.Request(config.voteUrl, None, request_headers)
+    request = urllib2.Request('http://millenium-servers.com/newvoter.php', None, request_headers)
     url = urlOpener.open(request)
     pageVote = url.read(500000) # on lit tout
     
 
 def getVoteVerif():
     """Recupere le 'voteVerif' constituer d'hex."""
-    index = pageVote.find(config.VoteVerifStr) + len(config.VoteVerifStr)
+    index = pageVote.find("""var m_url = "newvoter.php?voteID=" + id + "&voteVerif=""") + \
+            len("""var m_url = "newvoter.php?voteID=" + id + "&voteVerif=""")
     return pageVote[index:pageVote.find('&', index, index + 50)]
 
 
@@ -138,8 +139,8 @@ def main(user=None, passw=None):
         
         css = getcss(souspage, getHex(souspage))
         
-        request = urllib2.Request(config.voteUrl + 
-                                   str(config.urltomake % (VoteId, getVoteVerif(), css)), None, request_headers)
+        request = urllib2.Request('http://millenium-servers.com/newvoter.php' + \
+                      str("""?voteID=%s&voteVerif=%s&__c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
         url = urlOpener.open(request)
         VoteId += 1
         

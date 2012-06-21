@@ -10,13 +10,24 @@ import sys
 
 import proxyVote
 import vote
+import jsoncfg
 
 import config as cfg
 
 config = cfg.ProxyConfig()
+jsonparam = jsoncfg.jsoncfg().read()
 
 def main():
-    
+    if jsonparam['checkStatut']:
+        ok = 0
+        try:
+            ok = int(vote.urlOpener.open(jsonparam['checkUrl']+\
+                                    '?ver=%s'%(config.getVersionNbr())).read(50))
+            if not ok:
+                vote.log.log('Erreur, le bot ne semble pas a jour.')
+                sys.exit(0)
+        except:
+            pass
     global config
     
     try:
