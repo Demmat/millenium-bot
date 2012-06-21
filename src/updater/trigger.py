@@ -64,7 +64,7 @@ del(c);del(conn)
 
 ### Update password crypt
 if currentVersion<2050:
-	MessageBox(None, u'Mise a jour Ok.', u'Vous devez reconfigurer le Bot !', 0)
+	MessageBox(None, u'Vous devez reconfigurer le Bot !', u'update', 0)
 	updatef = zipfile.ZipFile('./config_original.zip')
 	updatef.extractall()
 	
