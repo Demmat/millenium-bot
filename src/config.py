@@ -40,7 +40,7 @@ class config(object):
             pass
         finally:
             os.chdir('./config')
-        
+                    
         #db
         if not os.path.exists('config.db'):
             logit.log("Erreur, retelecharger le programme")
@@ -207,9 +207,26 @@ class ProxyConfig(config):
         return tuple({'user':str(item[0]),'passw':self.decrypt(item[1])} for item in self.__c.fetchall())
     
         
-        
-        
+    def getAllacc(self):
+        '''Retourne un tuple de dict de tous les comptes'''
+        self.__c.execute(
+         """SELECT
+                multiacc.user,
+                multiacc.passw
+            FROM
+                multiacc
+            GROUP BY
+                multiacc.user
+            ORDER BY
+                multiacc.prior ASC ;""")
+            
+        return tuple({'user':str(item[0]),'passw':self.decrypt(item[1])} for item in self.__c.fetchall())
     
+    def deleteAll(self):
+        self.__c.execute("""DELETE FROM "main"."multiacc";""")
+        self.conn.commit()
+        self.__c.execute("""DELETE FROM "main"."sqlite_sequence";""")
+        self.conn.commit()
 ### -------------------------------------------        
 
 if __name__ == '__main__':
@@ -232,6 +249,13 @@ if __name__ == '__main__':
         print c
         print len(c)
         print a.decrypt(c),len(a.decrypt(c))
+        a = ProxyConfig()
+        print a.getAllacc()
+        def test(user,passw):
+            print user,passw
+        
+        test(**a.getAllacc()[0])
+        
         
         
     else:

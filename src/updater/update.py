@@ -24,6 +24,8 @@ import os
 
 import __importall #voir __importall !
 
+UpdateUrl = 'https://github.com/downloads/maxisoft/millenium-bot/update.zip'
+
 processName = ('MillenuimService.exe', 'svote.exe', 'vote.exe',
              'proxyVote.exe', 'launch.exe', 'xlsRead.exe', 'HttpProxy.exe',
              'ServiceInstaller.exe', 'update_prep.exe')
@@ -93,7 +95,7 @@ if __name__ == '__main__':
     except:
         pass
     
-    download('https://github.com/downloads/maxisoft/millenium-bot/update.zip','update.zip')
+    download(UpdateUrl,'update.zip')
     
     for proc in processName:
         Killprocess(proc)
@@ -112,7 +114,3 @@ if __name__ == '__main__':
     updatef.close()
     os.remove('./update.zip')
     
-    
-    
-    
-    pass

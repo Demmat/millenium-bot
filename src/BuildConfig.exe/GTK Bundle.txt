@@ -1,0 +1,4 @@
+http://ftp.acc.umu.se/pub/gnome/binaries/win32/gtk+/2.24/
+
+
+prendre share,lib,etc et mettre dans dist

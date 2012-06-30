@@ -52,12 +52,11 @@ setup(windows=[{
     options={'py2exe': {'bundle_files': 1}},)
 
 
-
-#### TO BUILD Library.exe ##########
+#### TO BUILD Library.zip ##########
 setup(windows=[{
     'script':'__importall.py',
 }],
-    options={'py2exe': {'bundle_files': 1,'compressed':False,'excludes':Exclusion}},)
+    options={'py2exe': {'bundle_files': 1,'compressed':False,'excludes':Exclusion,}},)
 
 try:
     os.chdir(os.path.dirname(sys.argv[0]))

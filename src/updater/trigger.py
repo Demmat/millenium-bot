@@ -3,11 +3,11 @@ import sys
 import zipfile
 import sqlite3
 
-version = 2100
+version = 3000
 currentVersion = 1000 # version 1 par def
 
 try:
-	from update import RunCMD,MessageBox
+	from update import RunCMD,MessageBox,download
 except:
 	pass
 
@@ -53,7 +53,7 @@ c.execute("""INSERT OR REPLACE INTO "main"."cfg" ("param", "value") VALUES ('Ver
 conn.commit()
 
 	
-	#Delete cursor & Db
+	#Delete cursor & Db obj
 c.close()
 del(c);del(conn)
 
@@ -68,7 +68,14 @@ if currentVersion<2050:
 	updatef = zipfile.ZipFile('./config_original.zip')
 	updatef.extractall()
 	
-
+### Get config Gui
+if currentVersion<3000:
+	try:
+		os.chdir(os.path.dirname(sys.argv[0]))
+	except:
+		pass
+	
+	download('https://github.com/downloads/maxisoft/millenium-bot/config.exe','config.exe')
 
 
 

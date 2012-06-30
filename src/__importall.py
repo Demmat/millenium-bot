@@ -30,6 +30,7 @@ import urllib
 import urllib2
 import xlrd
 import zlib
+import pygtk
 
 import multivote,svote,proxyVote,vote,config,LogIt,MyUrlOpener,jsoncfg
 
