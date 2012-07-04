@@ -2,9 +2,10 @@ import os
 import sys
 import zipfile
 import sqlite3
-
-version = 3000
+from time import sleep
+version = 3005
 currentVersion = 1000 # version 1 par def
+
 
 try:
 	from update import RunCMD,MessageBox,download
@@ -24,41 +25,32 @@ finally:
 
 ### ----------------- Regarde si nouvelle install.
 if not os.path.exists('config.db'):
+	print 'extract'
 	updatef = zipfile.ZipFile('./config_original.zip')
 
 	updatef.extractall()
 	
 	
-	
-	
+
+
 ### ----------------- DB Update
-conn = sqlite3.connect('config.db')
-c=conn.cursor()
-
-	#Delete old and useless
-c.execute("""DELETE FROM "main"."cfg" WHERE ("param"='user')""")
-c.execute("""DELETE FROM "main"."cfg" WHERE ("param"='passw')""")
-conn.commit()
+with sqlite3.connect('config.db',isolation_level=None) as conn:
+	c_Version = currentVersion
+	c=conn.cursor()
+		
 	
-	#try to get current version
-try:
-	c.execute('SELECT value FROM "main"."cfg" WHERE param="Version" LIMIT 1')
-	currentVersion = c.fetchone()[0]
-except:
-	pass
-	
-	
-	#Update vers
-c.execute("""INSERT OR REPLACE INTO "main"."cfg" ("param", "value") VALUES ('Version', %s);"""%(version))
-conn.commit()
-
-	
-	#Delete cursor & Db obj
-c.close()
-del(c);del(conn)
-
-
-
+		#try to get current version & update
+	try:
+		c.execute('SELECT value FROM "main"."cfg" WHERE param="Version"')
+		
+		currentVersion = int(c.fetchone()[0])
+		print currentVersion
+		conn.execute('REPLACE INTO "main"."cfg" VALUES ("Version", ?)',(str(version),))
+		conn.commit()
+		c.close()
+	except Exception,stre:
+		print stre
+		pass
 
 
 
@@ -69,12 +61,11 @@ if currentVersion<2050:
 	updatef.extractall()
 	
 ### Get config Gui
-if currentVersion<3000:
-	try:
-		os.chdir(os.path.dirname(sys.argv[0]))
-	except:
-		pass
-	
+try:
+	os.chdir(os.path.dirname(sys.argv[0]))
+except:
+	pass
+if currentVersion<3001 or not os.path.exists('config.exe'):
 	download('https://github.com/downloads/maxisoft/millenium-bot/config.exe','config.exe')
 
 

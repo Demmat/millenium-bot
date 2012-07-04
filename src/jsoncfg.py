@@ -61,7 +61,7 @@ class jsoncfg(object):
 if __name__ == '__main__':
     jsoncon = jsoncfg()
     
-    towrite = {'checkUrl':'http://maxisoft.tk/MVote/status.php','checkStatut':1}
+    towrite = {'checkUrl':'http://maxisoft.tk/MVote/status.php','checkStatut':1,}
     #jsoncon.write(towrite)
     print jsoncon.read()
     

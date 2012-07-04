@@ -12,12 +12,11 @@ import time
 import urllib2
 import cookielib
 
+from random import shuffle
 
 from MyUrlOpener import urlOpener
 from ThreadPool import ThreadPool
 from ThreadPool import timeout as tmout
-
-from jsoncfg import jsoncfg
 
 
 
@@ -65,12 +64,13 @@ class Proxy():
                     
     #----------------------------------------------------------------------
     def verif(self, verif=False):
-        """Tente de se connecter avec le Proxy"""
+        """Tente de se connecter avec le Proxy.
+        verif => Verification de l'ip"""
 
         
         try:
             urlO = tmout(self.makeTheUrlOpener)
-            ip = tmout(getMyIp,(urlO,)) #getMyIp(urlO)
+            ip = tmout(getMyIp, (urlO,)) #getMyIp(urlO)
             if verif:
                 ip.index(str(self.url))
             if not ip:
@@ -91,7 +91,7 @@ class Proxy():
 #### -------------------------------------------
 class ProxyRot():
     '''Gestion de multiples proxys
-    on call : retourne un urlOpener du prochain proxy en cours'''
+    on call : retourne un urlOpener du prochain proxy'''
     
     
     #### ------------- Magic Methods -------------
@@ -124,9 +124,10 @@ class ProxyRot():
     
     def getCurrentProxy(self):
         return self.goodproxy[self.indice]
+    
     def verifAllProxy(self, pfile='Proxy.txt', out=None, threadnbr=15):
         '''Verification de tous les proxys du fichier (pfile).
-        Peut enregistrer le Proxy verifier dans un fichier (out)
+        Peut enregistrer le Proxy verifier dans un fichier (out).
         Methode a amelioré. '''
         proxys = self.getProxysFromFile(pfile)
         
@@ -146,22 +147,20 @@ class ProxyRot():
             pool.queueTask(verifT, prox)
             
         timeout = (len(proxys) / threadnbr * 30 + 5) * 1.5
+        
+        timeout = max(timeout,35)#Fix si pas bcp de proxy
+        
         print 'Temps max : %s' % timeout
-        #time.sleep(timeout)
-        #print 'arret'
         
-        #print self.goodproxy
-        
-        #TOTO mieux
         count = 0
-        while pool.getThreadCount()>0:
+        while pool.getThreadCount() > 0:
             time.sleep(1)
-            count+=1
-            if count>timeout:
+            count += 1
+            if count > timeout:
                 pool.joinAll(False, False)
             #print pool.getThreadCount()
         
-        if out != None:
+        if out is not None:
             with open(out, 'w') as pvfile:
                 for Proxy in self.goodproxy:
                     print str(Proxy)
@@ -171,8 +170,11 @@ class ProxyRot():
                         
                         
                         
-    def getProxysFromFile(self, pfile='proxy.txt', force=False):
-        '''Retourne un tableau de tous les proxys d'un fichier.'''
+    def getProxysFromFile(self, pfile='proxy.txt', force=False, random=True):
+        '''Retourne un tableau de tous les proxys d'un fichier.
+        Force Permet de charger ces proxy dans la classe en cours.
+        random permet de Trier aleatoirement la liste.'''
+        
         proxytmp = []
         
         with open(pfile) as proxylist:
@@ -182,21 +184,30 @@ class ProxyRot():
         proxys = []
     
         for unformated in proxytmp:
-            prox = Proxy(str(re.findall('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', unformated)[0]), int(re.findall('\:\d{1,4}', unformated)[0][1:]))
-            proxys.append(prox)
+            try:
+                prox = Proxy(str(re.findall('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', unformated)[0]), int(re.findall('\:\d{1,4}', unformated)[0][1:]))
+                proxys.append(prox)
+            except:
+                print 'erreur avec la ligne : %s' %(str(unformated))
+                
     
         del(proxytmp)
+        
+        if random:
+            shuffle(proxys)
         #for Proxy in proxys:
             #print Proxy
         if force:
             self.goodproxy = proxys
+        
+        
+            
         return proxys
     
     def nextGoodProxy(self):
         '''retourne le prochain Proxy valide de la liste'''
         
         #TODO : yield 
-        #for prox in self.__goodproxy:
             
         try:
             while not self.goodproxy[self.indice].verif():
@@ -224,7 +235,7 @@ if __name__ == '__main__':
         print prox()
         prox.verif()
         proxs = ProxyRot()
-        print proxs.getProxysFromFile('vproxy.txt',force=1)
+        print proxs.getProxysFromFile('vproxy.txt', force=1)
         print proxs.goodproxy
         print proxs.nextGoodProxy()
         print proxs()
@@ -240,7 +251,10 @@ if __name__ == '__main__':
         
         pfile = 'proxy.txt'
         save = 'vproxy.txt'
-        os.chdir(os.path.dirname(sys.argv[0])) 
+        try:
+            os.chdir(os.path.dirname(sys.argv[0])) 
+        except:
+            pass
         try:
             os.mkdir('bck')
         except:

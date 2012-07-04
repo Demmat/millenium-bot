@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 '''
-Created on 8 juin 2012
+Created on 4 juin 2012
 
 @author: maxisoft
 '''
