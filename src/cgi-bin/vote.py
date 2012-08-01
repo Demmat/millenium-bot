@@ -106,23 +106,22 @@ def main(user=USER,passw=PASSW):
     
     #print getVoteVerif()
     VoteId = 3
-    while VoteId < 5:
-        dlPageVote()
-        #print pageVote
-        try:
-            souspage = decoupe()[0]
-        except:
-            raise Exception('Erreur source incorrecte (deja vote ?)')
-        #print souspage
-        hex = getHex(souspage)
-        #print hex
-        css = getcss(souspage, hex)
-        
-        request = urllib2.Request('http://millenium-servers.com/newvoter.php' + 
-                                   str("""?voteID=%s&voteVerif=%s&__c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
-        url = urlOpener.open(request)
-        VoteId += 1
-        print url.read(500000) # on lit tout
+    
+    dlPageVote()
+    #print pageVote
+    try:
+        souspage = decoupe()[0]
+    except:
+        raise Exception('Erreur source incorrecte (deja vote ?)')
+    #print souspage
+    hex = getHex(souspage)
+    #print hex
+    css = getcss(souspage, hex)
+    
+    request = urllib2.Request('http://millenium-servers.com/newvoter.php' + 
+                               str("""?voteID=%s&voteVerif=%s&c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
+    url = urlOpener.open(request)
+    print url.read(500000) # on lit tout
 
 
 

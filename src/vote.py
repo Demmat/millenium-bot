@@ -143,7 +143,6 @@ def main(user=None, passw=None):
     request = urllib2.Request('http://millenium-servers.com/newvoter.php' + \
                   str("""?voteID=%s&voteVerif=%s&c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
     url = urlOpener.open(request)
-    VoteId += 1
     
     if str(url.read(500000)).find('OK_VOTE') != -1: # sucess
         success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
