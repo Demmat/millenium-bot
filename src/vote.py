@@ -128,31 +128,29 @@ def main(user=None, passw=None):
     #print getVoteVerif()
     
     VoteId = 3  #voir la fonction javascript
-    while VoteId < 5:
         
-        sleep(random()*7)#Wait max 7 sec (pour simulé un vote cpatcha)
-        
-        dlPageVote()
-        try:
-            souspage = decoupe()[0]
-        except:
-            log.log('Erreur source incorrecte (deja vote ?)| %s' %(user))
-            raise Exception('Erreur source incorrecte (deja vote ?)')
-        
-        css = getcss(souspage, getHex(souspage))
-        
-        request = urllib2.Request('http://millenium-servers.com/newvoter.php' + \
-                      str("""?voteID=%s&voteVerif=%s&__c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
-        url = urlOpener.open(request)
-        VoteId += 1
-        
-        if str(url.read(500000)).find('OK_VOTE') != -1: # sucess
-            success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
-            print success
-            log.log(success)
-            if VoteId>4:
-                config.writeTime()
-                return 1
+    sleep(random()*7)#Wait max 7 sec (pour simulé un vote cpatcha)
+    
+    dlPageVote()
+    try:
+        souspage = decoupe()[0]
+    except:
+        log.log('Erreur source incorrecte (deja vote ?)| %s' %(user))
+        raise Exception('Erreur source incorrecte (deja vote ?)')
+    
+    css = getcss(souspage, getHex(souspage))
+    
+    request = urllib2.Request('http://millenium-servers.com/newvoter.php' + \
+                  str("""?voteID=%s&voteVerif=%s&c=temp&css=%s""" % (VoteId, getVoteVerif(), css)), None, request_headers)
+    url = urlOpener.open(request)
+    VoteId += 1
+    
+    if str(url.read(500000)).find('OK_VOTE') != -1: # sucess
+        success = 'Vote reussi avec %s sur %s' % (user, config.getTopName(VoteId - 1))
+        print success
+        log.log(success)
+        config.writeTime()
+        return 1
         
     
     

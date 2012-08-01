@@ -10,3 +10,5 @@
 
 *.pyc
 
+/DEBUG FILE
+/dbu.py
